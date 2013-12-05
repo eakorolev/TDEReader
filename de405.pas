@@ -71,18 +71,19 @@ implementation
 
 constructor TDE405.Create;
 const
-  _startFileDates: array[0..30] of Extended = ( 2305424.5, 2312752.5, 2320048.5,
+  _startFileDates: array[0..31] of Extended = ( 2305424.5, 2312752.5, 2320048.5,
     2327344.5, 2334640.5, 2341968.5, 2349264.5, 2356560.5, 2363856.5, 2371184.5,
     2378480.5, 2385776.5, 2393104.5, 2400400.5, 2407696.5, 2414992.5, 2422320.5,
     2429616.5, 2436912.5, 2444208.5, 2451536.5, 2458832.5, 2466128.5, 2473456.5,
-    2480752.5, 2488048.5, 2495344.5, 2502672.5, 2509968.5, 2517264.5, 2524624.5);
-  _fileNames: array[0..30] of String = ( 'ascp1600.405', 'ascp1620.405',
+    2480752.5, 2488048.5, 2495344.5, 2502672.5, 2509968.5, 2517264.5, 2524592.5,
+    2525008.5);
+  _fileNames: array[0..31] of String = ( 'ascp1600.405', 'ascp1620.405',
     'ascp1640.405', 'ascp1660.405', 'ascp1680.405', 'ascp1700.405', 'ascp1720.405',
     'ascp1740.405', 'ascp1760.405', 'ascp1780.405', 'ascp1800.405', 'ascp1820.405',
     'ascp1840.405', 'ascp1860.405', 'ascp1880.405', 'ascp1900.405', 'ascp1920.405',
     'ascp1940.405', 'ascp1960.405', 'ascp1980.405', 'ascp2000.405', 'ascp2020.405',
     'ascp2040.405', 'ascp2060.405', 'ascp2080.405', 'ascp2100.405', 'ascp2120.405',
-    'ascp2140.405', 'ascp2160.405', 'ascp2180.405', '' );
+    'ascp2140.405', 'ascp2160.405', 'ascp2180.405', 'ascp2200.405', '');
 begin
   startFileDates := _startFileDates;
   fileNames := _fileNames;
@@ -102,11 +103,11 @@ begin
   {*
    * Start epoch for all ephemeris in Julian Days.
    *}
-  fStartEpoch := 2305424.50;
+  fStartEpoch := 2305424.5;
   {*
    * End epoch for all ephemeris in Julian Days.
    *}
-  fFinalEpoch := 2524624.50;
+  fFinalEpoch := 2525008.5;
   {*
    * Ephemerides files are broken into intervals of length
    * "interval duration", in [days].
