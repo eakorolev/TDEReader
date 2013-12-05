@@ -38,55 +38,59 @@ type
    * @version 1.3 2011 Jun 15.
    *}
   TDE405 = class(TDEheader)
-    private
-      {*
-       * Array with starting dates for each file with chebychev coefficients.
-       *}
-      startFileDates: TDEExtArr;
-      {*
-       * Array with the names of each file with chebychev coefficients.
-       *}
-      fileNames: TDEStrArr;
-    public
-      {*
-       * Constructor which sets the main parameters of the ephemeris.
-       *}
-      constructor Create;
-      {*
-       * Method to read the DE405 ASCII ephemeris file corresponding to 'jultime'.
-       * The start and final dates of the ephemeris file are set, as are the
-       * Chebyshev polynomials coefficients for Mercury, Venus, Earth-Moon, Mars,
-       * Jupiter, Saturn, Uranus, Neptune, Pluto, Geocentric Moon, Sun, nutations
-       * and lunar librations.
-       *
-       * @param jultime
-       *            Julian date for calculation.
-       * @return true if all reading procedures is OK and 'jultime' is in properly
-       *         interval.
-       *}
-      function readEphCoeff(julTime: Extended): Boolean; override;
+  private
+    {*
+     * Array with starting dates for each file with chebychev coefficients.
+     *}
+    StartFileDates: TDEExtArr;
+    {*
+     * Array with the names of each file with chebychev coefficients.
+     *}
+    FileNames: TDEStrArr;
+  public
+    {*
+     * Constructor which sets the main parameters of the ephemeris.
+     *}
+    constructor Create;
+
+    {*
+     * Method to read the DE405 ASCII ephemeris file corresponding to 'jultime'.
+     * The start and final dates of the ephemeris file are set, as are the
+     * Chebyshev polynomials coefficients for Mercury, Venus, Earth-Moon, Mars,
+     * Jupiter, Saturn, Uranus, Neptune, Pluto, Geocentric Moon, Sun, nutations
+     * and lunar librations.
+     *
+     * @param jultime
+     *            Julian date for calculation.
+     * @return true if all reading procedures is OK and 'jultime' is in properly
+     *         interval.
+     *}
+    function ReadEphCoeff(JulTime: extended): boolean; override;
   end;
 
 implementation
 
 constructor TDE405.Create;
 const
-  _startFileDates: array[0..31] of Extended = ( 2305424.5, 2312752.5, 2320048.5,
-    2327344.5, 2334640.5, 2341968.5, 2349264.5, 2356560.5, 2363856.5, 2371184.5,
-    2378480.5, 2385776.5, 2393104.5, 2400400.5, 2407696.5, 2414992.5, 2422320.5,
-    2429616.5, 2436912.5, 2444208.5, 2451536.5, 2458832.5, 2466128.5, 2473456.5,
-    2480752.5, 2488048.5, 2495344.5, 2502672.5, 2509968.5, 2517264.5, 2524592.5,
-    2525008.5);
-  _fileNames: array[0..31] of String = ( 'ascp1600.405', 'ascp1620.405',
-    'ascp1640.405', 'ascp1660.405', 'ascp1680.405', 'ascp1700.405', 'ascp1720.405',
-    'ascp1740.405', 'ascp1760.405', 'ascp1780.405', 'ascp1800.405', 'ascp1820.405',
-    'ascp1840.405', 'ascp1860.405', 'ascp1880.405', 'ascp1900.405', 'ascp1920.405',
-    'ascp1940.405', 'ascp1960.405', 'ascp1980.405', 'ascp2000.405', 'ascp2020.405',
-    'ascp2040.405', 'ascp2060.405', 'ascp2080.405', 'ascp2100.405', 'ascp2120.405',
-    'ascp2140.405', 'ascp2160.405', 'ascp2180.405', 'ascp2200.405', '');
+  _StartFileDates: array[0..31] of extended =
+    (2305424.5, 2312752.5, 2320048.5, 2327344.5, 2334640.5, 2341968.5,
+    2349264.5, 2356560.5, 2363856.5, 2371184.5, 2378480.5, 2385776.5,
+    2393104.5, 2400400.5, 2407696.5, 2414992.5, 2422320.5, 2429616.5,
+    2436912.5, 2444208.5, 2451536.5, 2458832.5, 2466128.5, 2473456.5,
+    2480752.5, 2488048.5, 2495344.5, 2502672.5, 2509968.5, 2517264.5,
+    2524592.5, 2525008.5);
+  _FileNames: array[0..31] of string =
+    ('ascp1600.405', 'ascp1620.405', 'ascp1640.405', 'ascp1660.405',
+    'ascp1680.405', 'ascp1700.405', 'ascp1720.405', 'ascp1740.405',
+    'ascp1760.405', 'ascp1780.405', 'ascp1800.405', 'ascp1820.405',
+    'ascp1840.405', 'ascp1860.405', 'ascp1880.405', 'ascp1900.405',
+    'ascp1920.405', 'ascp1940.405', 'ascp1960.405', 'ascp1980.405',
+    'ascp2000.405', 'ascp2020.405', 'ascp2040.405', 'ascp2060.405',
+    'ascp2080.405', 'ascp2100.405', 'ascp2120.405', 'ascp2140.405',
+    'ascp2160.405', 'ascp2180.405', 'ascp2200.405', '');
 begin
-  startFileDates := _startFileDates;
-  fileNames := _fileNames;
+  StartFileDates := _StartFileDates;
+  FileNames := _FileNames;
 
   inherited Create;
 
@@ -175,69 +179,81 @@ begin
   SetLength(fEphemerisCoefficients, 233681);
 end;
 
-function TDE405.readEphCoeff(julTime: Extended): Boolean;
+function TDE405.ReadEphCoeff(JulTime: extended): boolean;
 var
-  i, records, j: Integer;
-  fileName, line, num: String;
+  i, Records, j: integer;
+  FileName, Line, Num: string;
   rFile: TextFile;
 begin
   Result := False;
 
-  if (julTime < fStartEpoch) or (julTime >= fFinalEpoch) then Exit;
+  if (JulTime < fStartEpoch) or (JulTime >= fFinalEpoch) then
+    Exit;
 
-  if (julTime < fEphemerisDates[1]) or (julTime >= fEphemerisDates[2]) then begin
+  if (JulTime < fEphemerisDates[1]) or (JulTime >= fEphemerisDates[2]) then
+  begin
     try
       // Select the proper ephemeris file
-      for i := 0 to Length(startFileDates) - 2 do begin
-	if (julTime >= startFileDates[i]) and (julTime < startFileDates[i + 1]) then begin
-	    fEphemerisDates[1] := startFileDates[i];
-	    fEphemerisDates[2] := startFileDates[i + 1];
-	    fileName := fileNames[i];
-	    records := floor((fEphemerisDates[2] - fEphemerisDates[1]) / intervalDuration);
+      for i := 0 to Length(StartFileDates) - 2 do
+      begin
+        if (JulTime >= StartFileDates[i]) and (JulTime < StartFileDates[i + 1]) then
+        begin
+          fEphemerisDates[1] := StartFileDates[i];
+          fEphemerisDates[2] := StartFileDates[i + 1];
+          FileName := FileNames[i];
+          Records := floor((fEphemerisDates[2] - fEphemerisDates[1]) / IntervalDuration);
         end;
       end;
-      fileName := fPathEph + fileName;
+      FileName := fPathEph + FileName;
 
-      AssignFile(rFile, fileName);
+      AssignFile(rFile, FileName);
       Reset(rFile);
 
       // Read each record in the file
-      for j := 1 to records do begin
+      for j := 1 to Records do
+      begin
         // read line 1 and ignore
-        ReadLn(rFile, line);
+        ReadLn(rFile, Line);
 
-	// read lines 2 through 341 and parse as appropriate
-	for i := 2 to 341 do begin
-          ReadLn(rFile, line);
-	  if i > 2 then begin
+        // read lines 2 through 341 and parse as appropriate
+        for i := 2 to 341 do
+        begin
+          ReadLn(rFile, Line);
+          if i > 2 then
+          begin
             // parse first entry
-            num := Copy(Line, 2, 25);
-            num[22] := 'E';
-            fephemeriscoefficients[(j - 1) * fnumbersperinterval + (3 * (i - 2) - 1)] := StrToFloat(num);
-	  end;
-          if (i > 2) and (i < 341) then begin
-            // parse second entry
-            num := Copy(Line, 28, 25);
-            num[22] := 'E';
-            fephemeriscoefficients[(j - 1) * fnumbersperinterval + (3 * (i - 2))] := StrToFloat(num);
+            Num := Copy(Line, 2, 25);
+            Num[22] := 'E';
+            fEphemerisCoefficients[(j - 1) * fNumbersPerInterval + (3 * (i - 2) - 1)] :=
+              StrToFloat(Num);
           end;
-          if i < 341 then begin
+          if (i > 2) and (i < 341) then
+          begin
+            // parse second entry
+            Num := Copy(Line, 28, 25);
+            Num[22] := 'E';
+            fEphemerisCoefficients[(j - 1) * fNumbersPerInterval + (3 * (i - 2))] :=
+              StrToFloat(Num);
+          end;
+          if i < 341 then
+          begin
             // parse third entry
-            num := Copy(Line, 54, 25);
-            num[22] := 'E';
-            fephemeriscoefficients[(j - 1) * fnumbersperinterval + (3 * (i - 2) + 1)] := StrToFloat(num);
+            Num := Copy(Line, 54, 25);
+            Num[22] := 'E';
+            fEphemerisCoefficients[(j - 1) * fNumbersPerInterval + (3 * (i - 2) + 1)] :=
+              StrToFloat(Num);
           end;
         end;
       end;
       CloseFile(rFile);
-      Result := true;
+      Result := True;
     except
       on E: Exception do
-        WriteLn('Error '+E.ClassName+': '+E.Message);
+        WriteLn('Error ' + E.ClassName + ': ' + E.Message);
     end;
-  end else
+  end
+  else
     Result := True;
 end;
 
 end.
-

@@ -28,10 +28,10 @@ uses
   Classes, SysUtils;
 
 type
-  TDEExtArr = array of Extended;
-  TDEExtMatr = array of array of Extended;
-  TDEIntArr = array of Integer;
-  TDEStrArr = array of String;
+  TDEExtArr = array of extended;
+  TDEExtMatr = array of array of extended;
+  TDEIntArr = array of integer;
+  TDEStrArr = array of string;
   {*
    * Base class containing constants and parameters for any JPL ephemerides and
    * the array of coefficients for Chebyshev polynomials. For each JPL ephemeris
@@ -42,171 +42,175 @@ type
    * @version 1.3 2011 Jun 15.
    *}
   TDEheader = class
-    protected
-      {*
-       * Numbers per interval.<br>
-       * Each interval contains an interval number, length, start and end
-       * jultimes, and Chebyshev coefficients. We keep only the coefficients
-       * NCOEFF-2. NCOEFF is from file header.xxx.
-       *}
-      fNumbersPerInterval: Integer;
+  protected
+    {*
+     * Numbers per interval.<br>
+     * Each interval contains an interval number, length, start and end
+     * jultimes, and Chebyshev coefficients. We keep only the coefficients
+     * NCOEFF-2. NCOEFF is from file header.xxx.
+     *}
+    fNumbersPerInterval: integer;
 
-      { GROUP 1010 from file header.xxx }
-      {*
-       * Three-digit number of planetary ephemeris version.
-       *}
-      fDEnomber: Integer;
+    { GROUP 1010 from file header.xxx }
+    {*
+     * Three-digit number of planetary ephemeris version.
+     *}
+    fDEnomber: integer;
 
-      { GROUP 1030 from file header.xxx }
-      {*
-       * Start epoch for all ephemeris in Julian Days.
-       *}
-      fStartEpoch: Extended;
-      {*
-       * End epoch for all ephemeris in Julian Days.
-       *}
-      fFinalEpoch: Extended;
-      {*
-       * Ephemerides files are broken into intervals of length
-       * "interval duration", in [days].
-       *}
-      fIntervalDuration: integer;
+    { GROUP 1030 from file header.xxx }
+    {*
+     * Start epoch for all ephemeris in Julian Days.
+     *}
+    fStartEpoch: extended;
+    {*
+     * End epoch for all ephemeris in Julian Days.
+     *}
+    fFinalEpoch: extended;
+    {*
+     * Ephemerides files are broken into intervals of length
+     * "interval duration", in [days].
+     *}
+    fIntervalDuration: integer;
 
-      { GROUP 1040 - 1041 from file header.xxx }
-      {*
-       * Speed of light in [km/sec].
-       *}
-      fCLight: extended;
-      {*
-       * Length of an A.U., in [km].
-       *}
-      fAU: extended;
-      {*
-       * Earth - Moon mass ratio.
-       *}
-      fEMrat: extended;
-      {*
-       * Mass parameter for Mercury GM in [AU^3/day^2].
-       *}
-      fGM1: extended;
-      {*
-       * Mass parameter for Venus GM in [AU^3/day^2].
-       *}
-      fGM2: extended;
-      {*
-       * Mass parameter for Earth-Moon barycenter GM in [AU^3/day^2].
-       *}
-      fGMB: extended;
-      {*
-       * Mass parameter for Mars GM in [AU^3/day^2].
-       *}
-      fGM4: extended;
-      {*
-       * Mass parameter for Jupiter GM in [AU^3/day^2].
-       *}
-      fGM5: extended;
-      {*
-       * Mass parameter for Saturn GM in [AU^3/day^2].
-       *}
-      fGM6: extended;
-      {*
-       * Mass parameter for Uranus GM in [AU^3/day^2].
-       *}
-      fGM7: extended;
-      {*
-       * Mass parameter for Neptune GM in [AU^3/day^2].
-       *}
-      fGM8: extended;
-      {*
-       * Mass parameter for Pluto GM in [AU^3/day^2].
-       *}
-      fGM9: extended;
-      {*
-       * Mass parameter for Sun GM in [AU^3/day^2].
-       *}
-      fGMS: extended;
+    { GROUP 1040 - 1041 from file header.xxx }
+    {*
+     * Speed of light in [km/sec].
+     *}
+    fCLight: extended;
+    {*
+     * Length of an A.U., in [km].
+     *}
+    fAU: extended;
+    {*
+     * Earth - Moon mass ratio.
+     *}
+    fEMrat: extended;
+    {*
+     * Mass parameter for Mercury GM in [AU^3/day^2].
+     *}
+    fGM1: extended;
+    {*
+     * Mass parameter for Venus GM in [AU^3/day^2].
+     *}
+    fGM2: extended;
+    {*
+     * Mass parameter for Earth-Moon barycenter GM in [AU^3/day^2].
+     *}
+    fGMB: extended;
+    {*
+     * Mass parameter for Mars GM in [AU^3/day^2].
+     *}
+    fGM4: extended;
+    {*
+     * Mass parameter for Jupiter GM in [AU^3/day^2].
+     *}
+    fGM5: extended;
+    {*
+     * Mass parameter for Saturn GM in [AU^3/day^2].
+     *}
+    fGM6: extended;
+    {*
+     * Mass parameter for Uranus GM in [AU^3/day^2].
+     *}
+    fGM7: extended;
+    {*
+     * Mass parameter for Neptune GM in [AU^3/day^2].
+     *}
+    fGM8: extended;
+    {*
+     * Mass parameter for Pluto GM in [AU^3/day^2].
+     *}
+    fGM9: extended;
+    {*
+     * Mass parameter for Sun GM in [AU^3/day^2].
+     *}
+    fGMS: extended;
 
-      { GROUP 1050 from file header.xxx }
-      {*
-       * For each planet (and the Moon makes 10, and the Sun makes 11),Earth
-       * nutations and Moon librations, each interval contains several complete
-       * sets of coefficients, each covering a fraction of the interval duration.
-       *}
-      fNumberOfCoefSets: TDEIntArr;
-      {*
-       * Each planet (and the Moon makes 10, and the Sun makes 11), Earth
-       * nutations and Moon librations, has a different number of Chebyshev
-       * coefficients used to calculate each component of position and velocity.
-       *}
-      fNumberOfCoefs: TDEIntArr;
-      {*
-       * Initialize array for number of Chebyshev polynomials.
-       *}
-      fNumberOfPoly: TDEIntArr;
-      {*
-       * Define array for Chebyshev coefficients in one file. Real size will be
-       * compute in subclasses.
-       *}
-      fEphemerisCoefficients: TDEExtArr;
-      {*
-       * Define array for start and final dates of file in Julian Days.
-       *}
-      fEphemerisDates: TDEExtArr;
-      {*
-       * Path to ASCII ephemerides files.
-       *}
-      fPathEph: String;
-      procedure setPathEph(value: String);
-    public
-      property numbersPerInterval: Integer read fNumbersPerInterval;
-      property startEpoch: Extended read fStartEpoch;
-      property finalEpoch: Extended read fFinalEpoch;
-      property intervalDuration: Integer read fIntervalDuration;
-      property CLight: Extended read fCLight;
-      property AU: Extended read fAU;
-      property EMrat: Extended read fEMrat;
-      property GM1: Extended read fGM1;
-      property GM2: Extended read fGM2;
-      property GMB: Extended read fGMB;
-      property GM4: Extended read fGM4;
-      property GM5: Extended read fGM5;
-      property GM6: Extended read fGM6;
-      property GM7: Extended read fGM7;
-      property GM8: Extended read fGM8;
-      property GM9: Extended read fGM9;
-      property GMS: Extended read fGMS;
-      property numberOfCoefSets: TDEIntArr read fNumberOfCoefSets;
-      property numberOfCoefs: TDEIntArr read fNumberOfCoefs;
-      property numberOfPoly: TDEIntArr read fNumberOfPoly;
-      property ephemerisCoefficients: TDEExtArr read fEphemerisCoefficients;
-      property ephemerisDates: TDEExtArr read fEphemerisDates;
-      property pathEph: String read fPathEph write setPathEph;
+    { GROUP 1050 from file header.xxx }
+    {*
+     * For each planet (and the Moon makes 10, and the Sun makes 11),Earth
+     * nutations and Moon librations, each interval contains several complete
+     * sets of coefficients, each covering a fraction of the interval duration.
+     *}
+    fNumberOfCoefSets: TDEIntArr;
+    {*
+     * Each planet (and the Moon makes 10, and the Sun makes 11), Earth
+     * nutations and Moon librations, has a different number of Chebyshev
+     * coefficients used to calculate each component of position and velocity.
+     *}
+    fNumberOfCoefs: TDEIntArr;
+    {*
+     * Initialize array for number of Chebyshev polynomials.
+     *}
+    fNumberOfPoly: TDEIntArr;
+    {*
+     * Define array for Chebyshev coefficients in one file. Real size will be
+     * compute in subclasses.
+     *}
+    fEphemerisCoefficients: TDEExtArr;
+    {*
+     * Define array for start and final dates of file in Julian Days.
+     *}
+    fEphemerisDates: TDEExtArr;
+    {*
+     * Path to ASCII ephemerides files.
+     *}
+    fPathEph: string;
+    procedure SetPathEph(Value: string);
+  public
+    property NumbersPerInterval: integer read fNumbersPerInterval;
+    property StartEpoch: extended read fStartEpoch;
+    property FinalEpoch: extended read fFinalEpoch;
+    property IntervalDuration: integer read fIntervalDuration;
+    property CLight: extended read fCLight;
+    property AU: extended read fAU;
+    property EMrat: extended read fEMrat;
+    property GM1: extended read fGM1;
+    property GM2: extended read fGM2;
+    property GMB: extended read fGMB;
+    property GM4: extended read fGM4;
+    property GM5: extended read fGM5;
+    property GM6: extended read fGM6;
+    property GM7: extended read fGM7;
+    property GM8: extended read fGM8;
+    property GM9: extended read fGM9;
+    property GMS: extended read fGMS;
+    property NumberOfCoefSets: TDEIntArr read fNumberOfCoefSets;
+    property NumberOfCoefs: TDEIntArr read fNumberOfCoefs;
+    property NumberOfPoly: TDEIntArr read fNumberOfPoly;
+    property EphemerisCoefficients: TDEExtArr read fEphemerisCoefficients;
+    property EphemerisDates: TDEExtArr read fEphemerisDates;
+    property PathEph: string read fPathEph write SetPathEph;
 
-      constructor Create;
-      {*
-       * @return string with planetary ephemeris version.
-       *}
-      function toString: String; override;
-      {*
-       * Prototype for the methods to read files with Chebyshev coefficients.
-       * Method is override in the subclasses for the specific ephemeris.
-       *
-       * @param julTime
-       *            Julian date for calculation.
-       * @return true if the operations of reading is success.
-       *}
-      function readEphCoeff(julTime: Extended): Boolean; virtual; abstract;
+    constructor Create;
+
+    {*
+     * @return string with planetary ephemeris version.
+     *}
+    function ToString: string; override;
+
+    {*
+     * Prototype for the methods to read files with Chebyshev coefficients.
+     * Method is override in the subclasses for the specific ephemeris.
+     *
+     * @param julTime
+     *            Julian date for calculation.
+     * @return true if the operations of reading is success.
+     *}
+    function ReadEphCoeff(JulTime: extended): boolean; virtual; abstract;
   end;
 
 implementation
 
 constructor TDEheader.Create;
 const
-  _NumberOfCoefSets: array[0..13] of Integer = (0, 4, 2, 2, 1, 1, 1, 1, 1, 1, 8, 2, 4, 4);
-  _NumberOfCoefs: array[0..13] of Integer = (0, 14, 10, 13, 11, 8, 7, 6, 6, 6, 13, 11, 10, 10);
-  _NumberOfPoly: array[0..13] of Integer = (0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3);
+  _NumberOfCoefSets: array[0..13] of integer =
+    (0, 4, 2, 2, 1, 1, 1, 1, 1, 1, 8, 2, 4, 4);
+  _NumberOfCoefs: array[0..13] of integer =
+    (0, 14, 10, 13, 11, 8, 7, 6, 6, 6, 13, 11, 10, 10);
+  _NumberOfPoly: array[0..13] of integer = (0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3);
 begin
-  // fNumbersPerInterval:=1016;
+  // fNumbersPerInterval := 1016;
   fNumberOfCoefSets := _NumberOfCoefSets;
   fNumberOfCoefs := _NumberOfCoefs;
   fNumberOfPoly := _NumberOfPoly;
@@ -214,15 +218,15 @@ begin
   fPathEph := '';
 end;
 
-procedure TDEheader.setPathEph(value: String);
+procedure TDEheader.SetPathEph(Value: string);
 begin
-  fPathEph := value;
+  fPathEph := Value;
 end;
 
-function TDEheader.toString: String;
+function TDEheader.ToString: string;
 begin
-  Result := 'JPL Planetary Ephemeris DE'+IntToStr(fDEnomber)+'/LE'+IntToStr(fDEnomber);
+  Result := 'JPL Planetary Ephemeris DE' + IntToStr(fDEnomber) +
+    '/LE' + IntToStr(fDEnomber);
 end;
 
 end.
-
