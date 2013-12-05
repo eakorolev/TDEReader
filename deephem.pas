@@ -1,3 +1,7 @@
+{* TDEReader: Peter Hristozov's JDEread (http://sourceforge.net/projects/jderead/) ported to Pascal.
+ * 
+ * Ported by Evgeny Korolev E-mail: mail@eakorolev.ru
+ *}
 {* JDEread: Java reader for JPL DE/LE ephemerides.
  * Copyright (C) 2009,2013  Peter Hristozov. All rights reserved.
  *
