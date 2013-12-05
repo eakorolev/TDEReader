@@ -66,6 +66,31 @@ type
        *         [rad/day].
        *}
       class function GetPlanetPosvel(de: TDEheader; julTime: Extended; i: Integer): TDEExtArr;
+
+      {*
+       * Method gives the position and velocity of the point 'ntarg' with respect
+       * to 'ncent'. This method is Java version of the procedure 'PLEPH', which
+       * not repeats fortran source exactly, but return a similar result.
+       *
+       * @param de
+       *            Class containing the parameters of the JPL ephemeris and
+       *            coefficients of the Chebyshev polynomials.
+       * @param et
+       *            julian ephemeris date at which interpolation is wanted.
+       * @param ntarg
+       *            integer number of target point: 1 = MERCURY, 2 = VENUS, 3 =
+       *            EARTH, 4 = MARS, 5 = JUPITER, 6 = SATURN , 7 = URANUS, 8 =
+       *            NEPTUNE, 9 = PLUTO, 10 = MOON, 11 = SUN, 12 = SOLAR-SYSTEM
+       *            BARYCENTER, 13 = EARTH-MOON BARYCENTER, 14 = NUTATIONS
+       *            (LONGITUDE AND OBLIQ), 15 = LIBRATIONS, IF ON EPH FILE.
+       * @param ncent
+       *            integer number of center point, same as 'ntarg'.
+       * @return array with posicions in [AU] and velocity in [AU/day]. In the
+       *         case of nutations the first four number will be set to nutations
+       *         and rate in [rad] and [rad/day] respectively. If 'ntarg=15' in
+       *         [rad] and [rad/day].
+       *}
+      class function PlEph(de: TDEheader; et: Extended; nTarg, nCent: Integer): TDEExtArr;
   end;
 
 implementation
@@ -169,6 +194,54 @@ begin
     for j := 1 to 6 do
       Result[j] := NaN;
   end;
+end;
+
+class function TDEephem.PlEph(de: TDEheader; et: Extended; nTarg, nCent: Integer): TDEExtArr;
+var
+  targ, cent, earth, moon: TDEExtArr;
+  i: Integer;
+begin
+  SetLength(targ, 7);
+  case nTarg of
+    3: begin
+      earth := TDEephem.GetPlanetPosvel(de, et, 3);
+      moon := TDEephem.GetPlanetPosvel(de, et, 10);
+      for i:= 1 to 6 do targ[i] := earth[i] - moon[i] / (1.0 + de.EMrat);
+    end;
+    10: begin
+      earth := TDEephem.GetPlanetPosvel(de, et, 3);
+      moon := TDEephem.GetPlanetPosvel(de, et, 10);
+      for i:= 1 to 6 do targ[i] := earth[i] + moon[i] - moon[i] / (1.0 + de.EMrat);
+    end;
+    12: begin end;
+    13: targ := TDEephem.GetPlanetPosvel(de, et, 3);
+    14: targ := TDEephem.GetPlanetPosvel(de, et, 12);
+    15: targ := TDEephem.GetPlanetPosvel(de, et, 13);
+    else targ := TDEephem.GetPlanetPosvel(de, et, nTarg);
+  end;
+
+  SetLength(cent, 7);
+  case nCent of
+    0: begin end;
+    3: begin
+      earth := TDEephem.GetPlanetPosvel(de, et, 3);
+      moon := TDEephem.GetPlanetPosvel(de, et, 10);
+      for i:= 1 to 6 do cent[i] := earth[i] - moon[i] / (1.0 + de.EMrat);
+    end;
+    10: begin
+      earth := TDEephem.GetPlanetPosvel(de, et, 3);
+      moon := TDEephem.GetPlanetPosvel(de, et, 10);
+      for i:= 1 to 6 do cent[i] := earth[i] + moon[i] - moon[i] / (1.0 + de.EMrat);
+    end;
+    12: begin end;
+    13: cent := TDEephem.GetPlanetPosvel(de, et, 3);
+    14: begin end;
+    15: begin end;
+    else cent := TDEephem.GetPlanetPosvel(de, et, nCent);
+  end;
+
+  SetLength(Result, 7);
+  for i:= 1 to 6 do Result[i] := targ[i] - cent[i];
 end;
 
 end.
