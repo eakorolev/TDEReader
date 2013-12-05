@@ -188,7 +188,7 @@ begin
   if (julTime < fEphemerisDates[1]) or (julTime >= fEphemerisDates[2]) then begin
     try
       // Select the proper ephemeris file
-      for i := 0 to Length(startfiledates) - 2 do begin
+      for i := 0 to Length(startFileDates) - 2 do begin
 	if (julTime >= startFileDates[i]) and (julTime < startFileDates[i + 1]) then begin
 	    fEphemerisDates[1] := startFileDates[i];
 	    fEphemerisDates[2] := startFileDates[i + 1];

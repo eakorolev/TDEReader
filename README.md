@@ -1,6 +1,6 @@
 # TDEReader
 
-Peter Hristozov's JDEread (http://sourceforge.net/projects/jderead/) ported Pascal.
+Peter Hristozov's JDEread (http://sourceforge.net/projects/jderead/) ported to Pascal.
 
 ## Original description
 
@@ -10,4 +10,4 @@ The JAVA library is designed to read any published JPL DE/LE ephemerides and to 
 
 JDEread was ported to Pascal for education purpose. Now TDEReader is only able to read DE405/LE405 ephemeris.
 
-Created in Lazarus IDE (http://www.lazarus.freepascal.org)
+Created with Lazarus IDE (http://www.lazarus.freepascal.org)

@@ -65,19 +65,19 @@ type
        *         angles phi, thita and psi and their rates in units [rad] and
        *         [rad/day].
        *}
-      class function getPlanetPosvel(de: TDEheader; julTime: Double; i: Integer): TDEExtArr;
+      class function GetPlanetPosvel(de: TDEheader; julTime: Extended; i: Integer): TDEExtArr;
   end;
 
 implementation
 
-class function TDEephem.getPlanetPosvel(de: TDEheader; julTime: Double; i: Integer): TDEExtArr;
+class function TDEephem.GetPlanetPosvel(DE: TDEheader; JulTime: Extended; i: Integer): TDEExtArr;
 var
-  interval, numbersToSkip, pointer, j, k, subInterval: Integer;
-  intervalStartTime, subIntervalDuration, chebyshevTime: Extended;
-  ephemerisRV, positionPoly, velocityPoly: TDEExtArr;
-  coef: TDEExtMatr;
+  Interval, NumbersToSkip, Pointer, j, k, SubInterval: Integer;
+  IntervalStartTime, SubIntervalDuration, ChebyshevTime: Extended;
+  PositionPoly, VelocityPoly: TDEExtArr;
+  Coef: TDEExtMatr;
 begin
-  SetLength(ephemerisRV, 7);
+  SetLength(Result, 7);
 
   SetLength(positionPoly, 20);
   SetLength(coef, 4, 20);
@@ -132,13 +132,13 @@ begin
 
     {* Calculate the position of the i'th planet at jultime. *}
     for j := 1 to de.numberOfPoly[i] do begin
-      ephemerisRV[j] := 0;
+      Result[j] := 0;
       for k := 1 to de.numberOfCoefs[i] do
-        ephemerisRV[j] := ephemerisRV[j] + coef[j][k] * positionPoly[k];
+        Result[j] := Result[j] + coef[j][k] * positionPoly[k];
 
       {* Convert from km to A.U. *}
       if i < 12 then
-        ephemerisRV[j] := ephemerisRV[j] / de.AU;
+        Result[j] := Result[j] / de.AU;
     end;
 
     {* Calculate the Chebyshev velocity polynomials. *}
@@ -150,27 +150,25 @@ begin
 
     {* Calculate the velocity of the i'th planet. *}
     for j := de.numberOfPoly[i] + 1 to 2 * de.numberOfPoly[i] do begin
-      ephemerisRV[j] := 0;
+      Result[j] := 0;
       for k := 1 to de.numberOfCoefs[i] do
-        ephemerisRV[j] := ephemerisRV[j] + coef[j - de.numberOfPoly[i]][k] * velocityPoly[k];
+        Result[j] := Result[j] + coef[j - de.numberOfPoly[i]][k] * velocityPoly[k];
       {*
        * The next line accounts for differentiation of the iterative
        * formula with respect to chebyshev time. Essentially, if dx/dt
        * = (dx/dct) times (dct/dt), the next line includes the factor
        * (dct/dt) so that the units are km/day.
        *}
-      ephemerisRV[j] := ephemerisRV[j] * (2.0 * de.numberOfCoefSets[i] / de.intervalDuration);
+      Result[j] := Result[j] * (2.0 * de.numberOfCoefSets[i] / de.intervalDuration);
 
       {* Convert from km to A.U. *}
       if i < 12 then
-        ephemerisRV[j] := ephemerisRV[j] / de.AU;
+        Result[j] := Result[j] / de.AU;
     end;
   end else begin
     for j := 1 to 6 do
-      ephemerisRV[j] := NaN;
+      Result[j] := NaN;
   end;
-
-  Result := ephemerisRV;
 end;
 
 end.
