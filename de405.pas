@@ -177,7 +177,7 @@ end;
 
 function TDE405.readEphCoeff(julTime: Extended): Boolean;
 var
-  mantissa1, mantissa2, exponent, i, records, j: Integer;
+  i, records, j: Integer;
   fileName, line, num: String;
   rFile: TextFile;
 begin
