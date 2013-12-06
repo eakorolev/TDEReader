@@ -39,14 +39,29 @@ type
    *}
   TDE405 = class(TDEheader)
   private
+  const
     {*
      * Array with starting dates for each file with chebychev coefficients.
      *}
-    StartFileDates: TDEExtArr;
+    StartFileDates: array[0..31] of extended =
+      (2305424.5, 2312752.5, 2320048.5, 2327344.5, 2334640.5, 2341968.5,
+      2349264.5, 2356560.5, 2363856.5, 2371184.5, 2378480.5, 2385776.5,
+      2393104.5, 2400400.5, 2407696.5, 2414992.5, 2422320.5, 2429616.5,
+      2436912.5, 2444208.5, 2451536.5, 2458832.5, 2466128.5, 2473456.5,
+      2480752.5, 2488048.5, 2495344.5, 2502672.5, 2509968.5, 2517264.5,
+      2524592.5, 2525008.5);
     {*
      * Array with the names of each file with chebychev coefficients.
      *}
-    FileNames: TDEStrArr;
+    FileNames: array[0..31] of string =
+      ('ascp1600.405', 'ascp1620.405', 'ascp1640.405', 'ascp1660.405',
+      'ascp1680.405', 'ascp1700.405', 'ascp1720.405', 'ascp1740.405',
+      'ascp1760.405', 'ascp1780.405', 'ascp1800.405', 'ascp1820.405',
+      'ascp1840.405', 'ascp1860.405', 'ascp1880.405', 'ascp1900.405',
+      'ascp1920.405', 'ascp1940.405', 'ascp1960.405', 'ascp1980.405',
+      'ascp2000.405', 'ascp2020.405', 'ascp2040.405', 'ascp2060.405',
+      'ascp2080.405', 'ascp2100.405', 'ascp2120.405', 'ascp2140.405',
+      'ascp2160.405', 'ascp2180.405', 'ascp2200.405', '');
   public
     {*
      * Constructor which sets the main parameters of the ephemeris.
@@ -71,27 +86,7 @@ type
 implementation
 
 constructor TDE405.Create;
-const
-  _StartFileDates: array[0..31] of extended =
-    (2305424.5, 2312752.5, 2320048.5, 2327344.5, 2334640.5, 2341968.5,
-    2349264.5, 2356560.5, 2363856.5, 2371184.5, 2378480.5, 2385776.5,
-    2393104.5, 2400400.5, 2407696.5, 2414992.5, 2422320.5, 2429616.5,
-    2436912.5, 2444208.5, 2451536.5, 2458832.5, 2466128.5, 2473456.5,
-    2480752.5, 2488048.5, 2495344.5, 2502672.5, 2509968.5, 2517264.5,
-    2524592.5, 2525008.5);
-  _FileNames: array[0..31] of string =
-    ('ascp1600.405', 'ascp1620.405', 'ascp1640.405', 'ascp1660.405',
-    'ascp1680.405', 'ascp1700.405', 'ascp1720.405', 'ascp1740.405',
-    'ascp1760.405', 'ascp1780.405', 'ascp1800.405', 'ascp1820.405',
-    'ascp1840.405', 'ascp1860.405', 'ascp1880.405', 'ascp1900.405',
-    'ascp1920.405', 'ascp1940.405', 'ascp1960.405', 'ascp1980.405',
-    'ascp2000.405', 'ascp2020.405', 'ascp2040.405', 'ascp2060.405',
-    'ascp2080.405', 'ascp2100.405', 'ascp2120.405', 'ascp2140.405',
-    'ascp2160.405', 'ascp2180.405', 'ascp2200.405', '');
 begin
-  StartFileDates := _StartFileDates;
-  FileNames := _FileNames;
-
   inherited Create;
 
   {*
