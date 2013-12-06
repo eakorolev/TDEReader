@@ -94,6 +94,10 @@ type
      *}
     fGM2: extended;
     {*
+     * Mass parameter for Earth GM in [AU^3/day^2].
+     *}
+    fGM3: extended;
+    {*
      * Mass parameter for Earth-Moon barycenter GM in [AU^3/day^2].
      *}
     fGMB: extended;
@@ -121,6 +125,10 @@ type
      * Mass parameter for Pluto GM in [AU^3/day^2].
      *}
     fGM9: extended;
+    {*
+     * Mass parameter for Moon GM in [AU^3/day^2].
+     *}
+    fGMM: extended;
     {*
      * Mass parameter for Sun GM in [AU^3/day^2].
      *}
@@ -157,6 +165,11 @@ type
      *}
     fPathEph: string;
     procedure SetPathEph(Value: string);
+    {*
+     * Functions to calculate fGM3 and fGMM (non-standart GM parameters for JPL DE)
+     *}
+    function getGM3: extended;
+    function getGMM: extended;
   public
     property NumbersPerInterval: integer read fNumbersPerInterval;
     property StartEpoch: extended read fStartEpoch;
@@ -168,12 +181,14 @@ type
     property GM1: extended read fGM1;
     property GM2: extended read fGM2;
     property GMB: extended read fGMB;
+    property GM3: extended read getGM3;
     property GM4: extended read fGM4;
     property GM5: extended read fGM5;
     property GM6: extended read fGM6;
     property GM7: extended read fGM7;
     property GM8: extended read fGM8;
     property GM9: extended read fGM9;
+    property GMM: extended read getGMM;
     property GMS: extended read fGMS;
     property NumberOfCoefSets: TDEIntArr read fNumberOfCoefSets;
     property NumberOfCoefs: TDEIntArr read fNumberOfCoefs;
@@ -227,6 +242,20 @@ function TDEheader.ToString: string;
 begin
   Result := 'JPL Planetary Ephemeris DE' + IntToStr(fDEnomber) +
     '/LE' + IntToStr(fDEnomber);
+end;
+
+function TDEheader.getGM3: extended;
+begin
+  if fGM3 = 0 then
+    fGM3 := getGMM * fEMrat;
+  Result := fGM3;
+end;
+
+function TDEheader.getGMM: extended;
+begin
+  if fGMM = 0 then
+    fGMM := fGMB / (1 + fEMrat);
+  Result := fGMM;
 end;
 
 end.
