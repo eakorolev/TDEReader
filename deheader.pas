@@ -224,11 +224,21 @@ const
   _NumberOfCoefs: array[0..13] of integer =
     (0, 14, 10, 13, 11, 8, 7, 6, 6, 6, 13, 11, 10, 10);
   _NumberOfPoly: array[0..13] of integer = (0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3);
+var
+  i: integer;
 begin
-  // fNumbersPerInterval := 1016;
-  fNumberOfCoefSets := _NumberOfCoefSets;
-  fNumberOfCoefs := _NumberOfCoefs;
-  fNumberOfPoly := _NumberOfPoly;
+  SetLength(fNumberOfCoefSets, Length(_NumberOfCoefSets));
+  for i := 0 to Length(_NumberOfCoefSets) - 1 do
+    fNumberOfCoefSets[i] := _NumberOfCoefSets[i];
+
+  SetLength(fNumberOfCoefs, Length(_NumberOfCoefs));
+  for i := 0 to Length(_NumberOfCoefs) - 1 do
+    fNumberOfCoefs[i] := _NumberOfCoefs[i];
+
+  SetLength(fNumberOfPoly, Length(_NumberOfPoly));
+  for i := 0 to Length(_NumberOfPoly) - 1 do
+    fNumberOfPoly[i] := _NumberOfPoly[i];
+
   SetLength(fEphemerisDates, 3);
   fPathEph := '';
 end;
